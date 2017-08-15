@@ -2,29 +2,41 @@ import * as firebase from 'firebase';
 import actions from '../actions/actions';
 import config from '../config/config';
 
-const fbApp = firebase.initializeApp(config);
-const db = fbApp.database().ref('contact');
+try {
+  firebase.initializeApp(config);
+} catch (e) {
+  console.log(e);
+}
+
+const firebaseRef = firebase.database().ref().child('contact');
 
 export default {
-  saveContact(contact) {
-    const db = fbApp.database().ref('contact');
-    const newContact = db.push();
-    newContact.set(contact);
+  async saveContact({ id, name, phone, email }) {
+    if (!id) {
+      await firebaseRef.push({ name, phone, email });
+    } else {
+      await firebaseRef.update({ [id]: { name, phone, email } });
+    }
+
+    this.getContacts();
   },
 
-  getContacts() {
-    let contacts = [];
-    const db = fbApp.database().ref('contact').orderByKey();
+  async deleteContact(id) {
+    await firebaseRef.update({ [id]: null });
+    this.getContacts();
+  },
 
-    db.once('value').then(snapshot => {
-      snapshot.forEach(childShapshot => {
-        const { name, phone, email } = childShapshot.val();
-        contacts.push({
-          id: childShapshot.key,
-          name,
-          phone,
-          email
-        });
+  async getContacts() {
+    const contacts = [];
+    const snapshot = await firebaseRef.once('value');
+
+    snapshot.forEach(childSnapshot => {
+      const { name, phone, email } = childSnapshot.val();
+      contacts.push({
+        id: childSnapshot.key,
+        name,
+        phone,
+        email
       });
     });
 

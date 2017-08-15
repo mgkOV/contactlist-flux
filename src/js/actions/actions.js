@@ -14,5 +14,19 @@ export default {
       actionType: c.RECIEVE_CONTACTS,
       contacts
     });
+  },
+
+  deleteContact(id) {
+    dispatcher.handleViewAction({
+      actionType: c.DELETE_CONTACT,
+      id
+    });
+  },
+
+  editContact(contact) {
+    dispatcher.handleViewAction({
+      actionType: c.EDIT_CONTACT,
+      contact
+    });
   }
 };

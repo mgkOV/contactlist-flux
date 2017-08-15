@@ -6,14 +6,27 @@ export default class AddForm extends Component {
     e.preventDefault();
 
     const contact = {
+      id: this.props.contactToEdit ? this.props.contactToEdit.id : null,
       name: this.name.value.trim(),
       phone: this.phone.value.trim(),
       email: this.email.value.trim()
     };
 
-    actions.saveContact(contact);
+    if (contact.name) {
+      actions.saveContact(contact);
+      this.name.value = '';
+      this.phone.value = '';
+      this.email.value = '';
+    }
   };
+
   render() {
+    const contact = this.props.contactToEdit;
+    if (contact) {
+      this.name.value = contact.name;
+      this.phone.value = contact.phone;
+      this.email.value = contact.email;
+    }
     return (
       <div className="well">
         <h3>Добавить контакт</h3>
@@ -43,7 +56,7 @@ export default class AddForm extends Component {
             />
           </div>
           <button type="submit" className="btn btn-primary">
-            Добавить
+            {contact ? 'Cохранить' : 'Добавить'}
           </button>
         </form>
       </div>

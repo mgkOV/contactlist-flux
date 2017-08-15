@@ -4,9 +4,11 @@ import store from '../stores/appStore';
 import dispatcher from '../dispatchers/dispatchers';
 import AddForm from './AddForm';
 import appApi from '../utils/appApi';
+import ContactList from './ContactList';
 
 const getAppState = () => ({
-  contacts: store.getContacts()
+  contacts: store.getContacts() || [],
+  contactToEdit: store.getContactToEdit()
 });
 
 class App extends Component {
@@ -25,10 +27,10 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state.contacts);
     return (
       <div>
-        <AddForm />
+        <AddForm contactToEdit={this.state.contactToEdit} />
+        <ContactList contacts={this.state.contacts} />
       </div>
     );
   }
